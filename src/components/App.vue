@@ -10,12 +10,8 @@
     <el-input placeholder="long" v-model="longitude" type="number"
     ></el-input>
 
-    <el-button type="primary" size="large" style="margin: auto;">Submit</el-button>
+    <el-button type="primary" size="large" style="margin: auto;" @click="createMoment()" :disabled="!momentValidation">Submit</el-button>
 
-
-
-    <!-- <emoji-panel v-if="source" :source="source"></emoji-panel> -->
-    <!-- <loading v-else></loading> -->
   </div>
 </template>
 
@@ -24,6 +20,10 @@
   import Loading from './Loading.vue'
 
   import {Input, Button} from 'element-ui'
+
+  var PouchDB = require('pouchdb');
+  var localDB;
+  let databaseName;
 
   export default {
     name: 'app',
@@ -34,13 +34,67 @@
         longitude: null
       }
     },
-    // async created() {
-    //   const emojilib = await import('emojilib')
-    //   this.source = Object.keys(emojilib.lib).map(name => ({
-    //     name,
-    //     ...emojilib.lib[name]
-    //   }))
-    // },
+    computed: {
+
+      momentValidation: function () {
+
+        if(this.comment == null && this.latitude == null && this.latitude == null){
+          return false
+        }else{
+          return true
+        }
+
+      }
+
+    },
+    mounted() {
+        // create local PouchDB
+        localDB = new PouchDB('localDB');
+
+        databaseName = 'moments';
+
+        window.PouchDB = PouchDB;
+
+    },
+    methods: {
+      createMoment: function () {
+
+        var vm = this
+
+        // create a document
+        let doc = {
+            "_id": this.guid(),
+            "comment": this.comment,
+            "lat": parseFloat(this.latitude),
+            "lng": parseFloat(this.longitude),
+            "timestamp": new Date()
+        };
+
+        // add it to db
+        localDB.put(doc)
+        .then(function (response) {
+
+          console.log("success: ", response);
+
+          vm.comment = null;
+          vm.latitude = null;
+          vm.longitude = null;
+          // handle response
+        }).catch(function (err) {
+          console.log(err);
+        });
+
+      },
+      guid: function () {
+            function s4() {
+                return Math.floor((1 + Math.random()) * 0x10000)
+                    .toString(16)
+                    .substring(1);
+            }
+            return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+                s4() + '-' + s4() + s4() + s4();
+        }
+    },
     components: {
       "el-input": Input,
       "el-button": Button
