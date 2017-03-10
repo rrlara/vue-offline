@@ -1,7 +1,8 @@
 <template>
   <div id="app">
-    <emoji-panel v-if="source" :source="source"></emoji-panel>
-    <loading v-else></loading>
+    <h1>Hello: I'm offline</h1>
+    <!-- <emoji-panel v-if="source" :source="source"></emoji-panel> -->
+    <!-- <loading v-else></loading> -->
   </div>
 </template>
 

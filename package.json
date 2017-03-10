@@ -12,7 +12,9 @@
     "dev": "vbuild -dc",
     "build": "vbuild -c",
     "surge": "npm run build && surge -p dist -d emoji-search.surge.sh",
-    "deploy": "npm run lint && gh-pages -d dist"
+    "deploy": "npm run lint && gh-pages -d dist",
+    "deploys3": "aws s3 sync dist/ s3://vue-offline --delete --profile rrlara",
+    "builddeploys3": "npm run build && npm run deploys3"
   },
   "devDependencies": {
     "babel-plugin-component": "^0.9.1",

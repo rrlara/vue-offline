@@ -1,6 +1,5 @@
 <template>
   <div class="main" v-if="source">
-    <github-badge class="github-icon" slug="egoist/emoji" fill="#999"></github-badge>
     <h1 class="site-name">
       <span>Emoji Searcher</span>
     </h1>
@@ -47,7 +46,7 @@
   import Clipboard from 'clipboard'
   import toast from 'native-toast'
   import GitHubBadge from 'vue-github-badge'
-  import { Switch } from 'element-ui'
+  import {Switch} from 'element-ui'
   import fetch from 'unfetch'
 
   export default {
@@ -82,7 +81,7 @@
 
         if (this.keyword) {
           if (this.useDango) {
-            const { results } = await fetch(`https://emoji.getdango.com/api/emoji?q=${this.keyword}`).then(res => res.json())
+            const {results} = await fetch(`https://emoji.getdango.com/api/emoji?q=${this.keyword}`).then(res => res.json())
             result = results
               .map(emoji => this.findEmojiByUnicode(emoji.text))
               .filter(emoji => Boolean(emoji))
