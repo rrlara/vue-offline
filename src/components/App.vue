@@ -12,18 +12,18 @@
 
     <el-button type="primary" size="large" style="margin: auto; margin-top:10px;" @click="createMoment()" :disabled="!momentValidation">Submit</el-button>
 
-     <!-- <div class="Image-input__input-wrapper">
+     <div class="Image-input__input-wrapper">
         Choose
         <input @change="previewThumbnail" class="Image-input__input"
         name="thumbnail" type="file"
         accept="image/*" capture="camera">
-      </div> -->
+      </div>
 
     <p>
       <el-row v-if="posts">
       <el-col :span="12" v-for="(post, index) in posts" :key="index" style="padding: 5px;">
         <el-card :body-style="{ padding: '0px' }">
-          <!-- <img :src="turnBlobToImage(post._attachments.image.digest)" class="image"> -->
+          <img :src="turnBlobToImage(post._attachments.image)" class="image" width="100%">
           <!-- <img :src="post._attachments.image.digest" class="image"> -->
           <div style="padding: 14px;">
             <span>{{ post.comment }}</span>
@@ -99,12 +99,12 @@
             "lat": parseFloat(this.latitude),
             "lng": parseFloat(this.longitude),
             "timestamp": new Date().toJSON(),
-            // "_attachments": {
-            //   'image': {
-            //     "content_type": 'image/jpg',
-            //     "data": this.imageSrc
-            //   }
-            // }
+            "_attachments": {
+              'image': {
+                "content_type": 'image/jpg',
+                "data": this.imageSrc
+              }
+            }
 
         };
 
@@ -132,13 +132,22 @@
 
           // window.URL = window.URL || window.webkitURL
 
-          var b = blob
+          var data = {
+            content_type: blob.content_type,
+            data: blob.data
+          }
 
-              console.log(window);
+          var binaryData = [];
+          binaryData.push(data);
 
-              var url = window.URL.createObjectURL(b)
-              console.log(url);
-              // return url;
+          console.log("binaryData: ", binaryData);
+
+
+          // var url = window.URL.createObjectURL(b)
+          var url = URL.createObjectURL(new Blob(binaryData, {type: "image/jpg"}))
+          url = 'data:image/gif;base64,' + data.data
+          console.log(url);
+          return url;
 
 
         },

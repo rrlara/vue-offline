@@ -27,7 +27,7 @@ store.findPosts = () => {
       emit(doc.createdAt)
     }
   }
-  return db.query(map, {include_docs: true}).then(posts =>
+  return db.query(map, {include_docs: true, attachments: true}).then(posts =>
     _.map(posts.rows, (post) => post.doc)
   )
 }
