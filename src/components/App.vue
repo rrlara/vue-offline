@@ -10,21 +10,20 @@
     <el-input placeholder="long" v-model="longitude" type="number"
     ></el-input>
 
-    <el-button type="primary" size="large" style="margin: auto; margin-top:10px;" @click="createMoment()" :disabled="!momentValidation">Submit</el-button>
+    <div class="Image-input__input-wrapper">
+      Choose
+      <input @change="previewThumbnail" class="Image-input__input"
+      name="thumbnail" type="file"
+      accept="image/*" capture="camera">
+    </div>
 
-     <div class="Image-input__input-wrapper">
-        Choose
-        <input @change="previewThumbnail" class="Image-input__input"
-        name="thumbnail" type="file"
-        accept="image/*" capture="camera">
-      </div>
+    <el-button type="primary" size="large" style="margin: auto; margin-top:10px;" @click="createMoment()">Submit</el-button>
 
     <p>
       <el-row v-if="posts">
       <el-col :span="12" v-for="(post, index) in posts" :key="index" style="padding: 5px;">
         <el-card :body-style="{ padding: '0px' }">
-          <img :src="turnBlobToImage(post._attachments.image)" class="image" width="100%">
-          <!-- <img :src="post._attachments.image.digest" class="image"> -->
+          <img v-if="post._attachments" :src="turnBlobToImage(post._attachments.image)" class="image" width="100%">
           <div style="padding: 14px;">
             <span>{{ post.comment }}</span>
             <div class="bottom clearfix">
@@ -99,14 +98,16 @@
             "lat": parseFloat(this.latitude),
             "lng": parseFloat(this.longitude),
             "timestamp": new Date().toJSON(),
-            "_attachments": {
+        };
+
+        if(this.imageSrc){
+          doc._attachments = {
               'image': {
                 "content_type": 'image/jpg',
                 "data": this.imageSrc
               }
             }
-
-        };
+        }
 
 
         store.create(doc).then(results => {
@@ -140,13 +141,13 @@
           var binaryData = [];
           binaryData.push(data);
 
-          console.log("binaryData: ", binaryData);
+          // console.log("binaryData: ", binaryData);
 
 
           // var url = window.URL.createObjectURL(b)
           var url = URL.createObjectURL(new Blob(binaryData, {type: "image/jpg"}))
           url = 'data:image/gif;base64,' + data.data
-          console.log(url);
+          // console.log(url);
           return url;
 
 
@@ -158,31 +159,9 @@
 
         var input = event.target
 
-        // var reader = new FileReader;
-
         if (input.files && input.files[0]) {
 
-          // console.log("input.files[0]: ", input.files[0]);
-
-          // var url = URL.createObjectURL(input.files[0])
-          //     console.log("createObjectURL: ", url);
-
           self.imageSrc = input.files[0]
-
-          // reader.onload = function (e) {
-            // self.imageSrc = e.target.result
-            // imgComp.downscaleImage(e.target.result, 600, 'image/jpeg', 0.5)
-            // this.resizeImage(e.target.result, 600, 'image/jpeg', 0.2)
-          // }
-          // reader.onloadend = function () {
-          //   setTimeout(function(){
-          //     self.resizeImage(640, 'image/jpeg', 0.7)
-
-          //     var element = document.getElementById("msgContainer");
-          //     element.scrollTop = 0;
-          //   }, 500);
-
-          // };
           reader.readAsDataURL(input.files[0])
         }
       },
@@ -214,8 +193,12 @@
     max-width: 700px;
     margin: 0 auto;
   }
-  input {
-  font-size: 16px;
+  el-input {
+  font-size: 30px;
+}
+.el-textarea{
+  font-size: 30px !important;
+
 }
 </style>
 
