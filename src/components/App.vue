@@ -2,6 +2,8 @@
   <div id="app">
     <h1>Hello: I'm offline</h1>
 
+    <el-button type="primary" size="large" style="margin: auto; margin-top:10px;" @click="getLocation()">Get my location</el-button>
+
     <el-input placeholder="Write your commit" v-model="comment" type="textarea"
     :rows="2"></el-input>
 
@@ -29,6 +31,7 @@
             <div class="bottom clearfix">
               <time class="time">{{ formatDate(post.timestamp) }}</time>
             </div>
+            <span @click="deletePost(post._id)">DELETE</span>
           </div>
         </el-card>
       </el-col>
@@ -60,6 +63,7 @@
         latitude: null,
         longitude: null,
         imageSrc: null,
+        resImage: null,
         posts: null
       }
     },
@@ -118,6 +122,14 @@
         this.latitude = null;
         this.longitude = null;
         this.imageSrc = null;
+        this.resImage = null;
+
+      },
+      deletePost: function (id) {
+
+        store.deletePostById(id).then(response => {
+          store.reloadPosts(this, 'posts')
+        })
 
       },
       guid: function () {
@@ -126,8 +138,7 @@
                     .toString(16)
                     .substring(1);
             }
-            return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-                s4() + '-' + s4() + s4() + s4();
+            return s4() + s4() + '-' + s4();
         },
         turnBlobToImage: function (blob) {
 
@@ -162,9 +173,96 @@
         if (input.files && input.files[0]) {
 
           self.imageSrc = input.files[0]
-          reader.readAsDataURL(input.files[0])
+
+          // console.log("self.imageSrc: ", self.imageSrc);
+
+          // self.resizeImage(640, 'image/jpeg', 0.5)
+
+          // reader.onload = function (e) {
+          //   self.imageSrc = e.target.result
+          //   // imgComp.downscaleImage(e.target.result, 600, 'image/jpeg', 0.5)
+          //   // this.resizeImage(e.target.result, 600, 'image/jpeg', 0.2)
+          // }
+          // reader.onloadend = function () {
+          //   setTimeout(function(){
+          //     self.resizeImage(640, 'image/jpeg', 0.7)
+
+          //   }, 500);
+
+          // };
+          // reader.readAsDataURL(input.files[0])
+
         }
       },
+      resizeImage: function (newWidth, imageType, imageArguments) {
+
+        var vm = this;
+
+
+        var image, oldWidth, oldHeight, newHeight, canvas, ctx, newDataUrl;
+
+              // Provide default values
+              imageType = imageType || "image/jpeg";
+              imageArguments = imageArguments || 0.7;
+
+
+
+                  // Create a temporary image so that we can compute the height of the downscaled image.
+                  image = new Image();
+                  image.src = this.imageSrc;
+
+
+                  // image.crossOrigin = 'Anonymous';
+                  oldWidth = image.width;
+                  oldHeight = image.height;
+                  newHeight = Math.floor(oldHeight / oldWidth * newWidth)
+
+                  // Create a temporary canvas to draw the downscaled image on.
+                  canvas = document.createElement("canvas");
+                  canvas.width = newWidth;
+                  canvas.height = newHeight;
+                  var ctx = canvas.getContext("2d");
+
+
+                  // Draw the downscaled image on the canvas and return the new data URL.
+                  ctx.drawImage(image, 0, 0, newWidth, newHeight);
+
+                  newDataUrl = canvas.toDataURL(imageType, imageArguments);
+
+                  vm.resImage = new File([newDataUrl], "resize.jpg", {type: "image/jpg"})
+
+                  console.log("vm.resImage: ", vm.resImage);
+
+
+                  // vm.resImage = newDataUrl
+      },
+      getLocation: function () {
+
+        var vm = this;
+        // console.log('get location')
+        function geo_success(position) {
+
+          // console.log('success')
+
+                        vm.latitude = position.coords.latitude
+                        vm.longitude = position.coords.longitude
+
+                    }
+
+                    function geo_error() {
+
+                      alert("didn't work offline")
+
+                    }
+
+                    var geo_options = {
+                      enableHighAccuracy: true,
+                      maximumAge        : 30000,
+                      timeout           : 27000
+                    };
+
+          var wpid = navigator.geolocation.getCurrentPosition(geo_success, geo_error, geo_options);
+      }
     },
     components: {
       "el-input": Input,

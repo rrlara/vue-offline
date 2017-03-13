@@ -36,6 +36,13 @@ store.findPostById = (id) => {
   return db.get(id)
 }
 
+store.deletePostById = (id) => {
+  // return db.get(id)
+  return db.get(id).then(function(doc) {
+    db.remove(doc);
+  })
+}
+
 store.findCommentsByPostId = (postId) => {
   function map (doc, emit) {
     if (doc.postId === postId) {
