@@ -7,11 +7,6 @@
     <el-input placeholder="Write your commit" v-model="comment" type="textarea"
     :rows="2" class="comment"></el-input>
 
-    <!-- <el-input placeholder="lat" v-model="latitude" type="number"
-    ></el-input>
-    <el-input placeholder="long" v-model="longitude" type="number"
-    ></el-input> -->
-
     <div v-if="imageSrc == null">
       <el-button>
         <i class="el-icon-upload"></i>
@@ -58,8 +53,6 @@
   var reader = new FileReader()
 
   import toast from 'native-toast'
-
-  // window.URL = window.URL || window.webkitURL;
 
   export default {
     name: 'app',
@@ -124,7 +117,6 @@
         store.create(doc).then(results => {
           store.reloadPosts(this, 'posts')
           toast({message: `successfully saved`, type: 'success'})
-          // toast({message: `Copied ${e.text}`, type: 'success'})
         })
 
         this.comment = null;
@@ -189,7 +181,7 @@
           }
           reader.onloadend = function () {
             setTimeout(function(){
-              self.resizeImage(1000, 'image/jpeg', 1)
+              self.resizeImage(640, 'image/jpeg', .7)
             }, 100);
 
           };
@@ -206,7 +198,7 @@
 
               // Provide default values
               imageType = imageType || "image/jpeg";
-              imageArguments = imageArguments || 0.7;
+              imageArguments = imageArguments || 0.4;
 
 
 
@@ -232,8 +224,6 @@
 
                   newDataUrl = canvas.toDataURL(imageType, imageArguments);
 
-                  // vm.resImage = new File([newDataUrl], "resize.jpg", {type: "image/jpg"})
-
                   var binary = atob(newDataUrl.split(',')[1]);
                   var array = [];
                   for (var i = 0; i < binary.length; i++) {
@@ -243,16 +233,11 @@
 
                   console.log("vm.resImage: ", vm.resImage);
 
-
-                  // vm.resImage = newDataUrl
       },
       getLocation: function () {
 
         var vm = this;
-        // console.log('get location')
         function geo_success(position) {
-
-          // console.log('success')
 
                         vm.latitude = position.coords.latitude
                         vm.longitude = position.coords.longitude
