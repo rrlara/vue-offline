@@ -57,6 +57,8 @@
 
   var reader = new FileReader()
 
+  import toast from 'native-toast'
+
   // window.URL = window.URL || window.webkitURL;
 
   export default {
@@ -121,6 +123,8 @@
 
         store.create(doc).then(results => {
           store.reloadPosts(this, 'posts')
+          toast({message: `successfully saved`, type: 'success'})
+          // toast({message: `Copied ${e.text}`, type: 'success'})
         })
 
         this.comment = null;
@@ -134,6 +138,7 @@
 
         store.deletePostById(id).then(response => {
           store.reloadPosts(this, 'posts')
+          toast({message: `deleted`, type: 'warning'})
         })
 
       },
@@ -293,6 +298,8 @@
     font-size: 16px !important;
   }
 </style>
+
+<style src="native-toast/dist/native-toast.css"></style>
 
 <style scoped>
   #app {
