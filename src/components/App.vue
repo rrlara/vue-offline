@@ -12,14 +12,20 @@
     <el-input placeholder="long" v-model="longitude" type="number"
     ></el-input>
 
-    <div class="Image-input__input-wrapper">
-      <i class="el-icon-upload"></i>
-      <input @change="previewThumbnail" class="Image-input__input"
-      name="thumbnail" type="file"
-      accept="image/*" capture="camera">
+    <div v-if="imageSrc == null">
+      <el-button>
+        <i class="el-icon-upload"></i>
+        <input @change="previewThumbnail" class="Image-input__input"
+        name="thumbnail" type="file"
+        accept="image/*" capture="camera">
+      </el-button>
+    </div>
+    <div v-else style="padding-top: 10px;">
+      <img :src="imageSrc" width="100%"/>
     </div>
 
-    <el-button type="primary" size="large" style="margin: auto; margin-top:10px;" @click="createMoment()">Submit</el-button>
+    <el-button type="primary" size="large" style="margin: auto; margin-top:10px;" @click="createMoment()"
+    :disabled="!momentValidation">Submit</el-button>
 
     <p>
       <el-row v-if="posts">
@@ -62,14 +68,15 @@
         longitude: null,
         imageSrc: null,
         resImage: null,
-        posts: null
+        posts: null,
+        previewImage: null
       }
     },
     computed: {
 
       momentValidation: function () {
 
-        if(this.comment == null || this.latitude == null || this.latitude == null){
+        if(this.latitude == null || this.latitude == null){
           return false
         }else{
           return true
@@ -160,11 +167,15 @@
 
         this.imageSrc = null
 
+        console.log("event: ", event);
+
         var input = event.target
 
         if (input.files && input.files[0]) {
 
           self.imageSrc = input.files[0]
+
+          input.files = null;
 
           console.log("self.imageSrc: ", self.imageSrc);
 
@@ -284,13 +295,13 @@
   #app {
     max-width: 700px;
     margin: 0 auto;
+    padding: 10px;
   }
   el-input {
   font-size: 30px;
 }
 .el-textarea{
   font-size: 30px !important;
-
 }
 </style>
 
