@@ -13,7 +13,7 @@
     ></el-input>
 
     <div class="Image-input__input-wrapper">
-      Choose
+      <i class="el-icon-upload"></i>
       <input @change="previewThumbnail" class="Image-input__input"
       name="thumbnail" type="file"
       accept="image/*" capture="camera">
@@ -42,8 +42,6 @@
 </template>
 
 <script>
-  import EmojiPanel from './EmojiPanel.vue'
-  import Loading from './Loading.vue'
 
   import {Input, Button, Card, Row, Col} from 'element-ui'
 
@@ -104,11 +102,11 @@
             "timestamp": new Date().toJSON(),
         };
 
-        if(this.imageSrc){
+        if(this.resImage){
           doc._attachments = {
               'image': {
                 "content_type": 'image/jpg',
-                "data": this.imageSrc
+                "data": this.resImage
               }
             }
         }
@@ -142,8 +140,6 @@
         },
         turnBlobToImage: function (blob) {
 
-          // window.URL = window.URL || window.webkitURL
-
           var data = {
             content_type: blob.content_type,
             data: blob.data
@@ -152,10 +148,6 @@
           var binaryData = [];
           binaryData.push(data);
 
-          // console.log("binaryData: ", binaryData);
-
-
-          // var url = window.URL.createObjectURL(b)
           var url = URL.createObjectURL(new Blob(binaryData, {type: "image/jpg"}))
           url = 'data:image/gif;base64,' + data.data
           // console.log(url);
@@ -174,23 +166,18 @@
 
           self.imageSrc = input.files[0]
 
-          // console.log("self.imageSrc: ", self.imageSrc);
+          console.log("self.imageSrc: ", self.imageSrc);
 
-          // self.resizeImage(640, 'image/jpeg', 0.5)
+          reader.onload = function (e) {
+            self.imageSrc = e.target.result
+          }
+          reader.onloadend = function () {
+            setTimeout(function(){
+              self.resizeImage(1000, 'image/jpeg', 1)
+            }, 100);
 
-          // reader.onload = function (e) {
-          //   self.imageSrc = e.target.result
-          //   // imgComp.downscaleImage(e.target.result, 600, 'image/jpeg', 0.5)
-          //   // this.resizeImage(e.target.result, 600, 'image/jpeg', 0.2)
-          // }
-          // reader.onloadend = function () {
-          //   setTimeout(function(){
-          //     self.resizeImage(640, 'image/jpeg', 0.7)
-
-          //   }, 500);
-
-          // };
-          // reader.readAsDataURL(input.files[0])
+          };
+          reader.readAsDataURL(input.files[0])
 
         }
       },
@@ -229,7 +216,14 @@
 
                   newDataUrl = canvas.toDataURL(imageType, imageArguments);
 
-                  vm.resImage = new File([newDataUrl], "resize.jpg", {type: "image/jpg"})
+                  // vm.resImage = new File([newDataUrl], "resize.jpg", {type: "image/jpg"})
+
+                  var binary = atob(newDataUrl.split(',')[1]);
+                  var array = [];
+                  for (var i = 0; i < binary.length; i++) {
+                    array.push(binary.charCodeAt(i));
+                  }
+                  vm.resImage = new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
 
                   console.log("vm.resImage: ", vm.resImage);
 

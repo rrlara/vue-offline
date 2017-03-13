@@ -5,8 +5,8 @@ import _ from 'lodash'
 var remotedb
 
 // create local PouchDB
-var db = new PouchDB('localDB', {adapter: 'websql'})
-var databaseName = 'moments'
+var db = new PouchDB('localDB', {adapter: 'websql', size: 51})
+
 window.PouchDB = PouchDB
 
 var store = {}
