@@ -5,12 +5,12 @@
     <el-button type="primary" size="large" style="margin: auto; margin-top:10px;" @click="getLocation()">Get my location</el-button>
 
     <el-input placeholder="Write your commit" v-model="comment" type="textarea"
-    :rows="2"></el-input>
+    :rows="2" class="comment"></el-input>
 
-    <el-input placeholder="lat" v-model="latitude" type="number"
+    <!-- <el-input placeholder="lat" v-model="latitude" type="number"
     ></el-input>
     <el-input placeholder="long" v-model="longitude" type="number"
-    ></el-input>
+    ></el-input> -->
 
     <div v-if="imageSrc == null">
       <el-button>
@@ -289,6 +289,9 @@
   * {
     box-sizing: border-box;
   }
+  .el-textarea__inner{
+    font-size: 16px !important;
+  }
 </style>
 
 <style scoped>
@@ -300,8 +303,16 @@
   el-input {
   font-size: 30px;
 }
-.el-textarea{
+.comment{
+  padding-bottom: 5px;
+}
+.comment textarea{
   font-size: 30px !important;
+  padding-bottom: 5px;
+}
+.el-input{
+  font-size: 30px !important;
+  padding-bottom: 5px;
 }
 </style>
 
