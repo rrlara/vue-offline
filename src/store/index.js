@@ -3,7 +3,6 @@ import _ from 'lodash'
 
 // const db = new PouchDB('vuedb')
 var remotedb
-
 // create local PouchDB
 var db = new PouchDB('localDB', {adapter: 'websql', size: 51})
 
